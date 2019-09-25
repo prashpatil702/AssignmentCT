@@ -65,7 +65,7 @@ public class EmployeeMgmtApplicationTests {
 						"	\"id\": 1,\n" + 
 						"	\"empName\":\"prashant\"\n" + 
 						"}")
-				.contentType(MediaType.APPLICATION_JSON);
+				.contentType(MediaType.APPLICATION_JSON); 
 		
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
