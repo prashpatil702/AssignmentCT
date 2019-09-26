@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,8 +28,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.example.model.Employee;
-
-import com.example.model.Response1;
 import com.example.service.EmployeeService;
 import com.example.service.EmployeeServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,7 +53,7 @@ public class EmployeeMgmtApplicationTests {
 	
 	
 	@Test
-	public void addEmployeeTest1() throws Exception  {
+	public void addEmployeeTest() throws Exception  {
 		
 		Mockito.when(
 				employeeService.addEmp(Mockito.any(Employee.class))).thenReturn(true);
@@ -69,12 +68,14 @@ public class EmployeeMgmtApplicationTests {
 		
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-		MockHttpServletResponse response = result.getResponse();
+		//MockHttpServletResponse response = result.getResponse();
+		int status = result.getResponse().getStatus();
 		
-		System.out.println("xxx "+response.getContentAsString());
-		Assert.assertEquals("{\"msg\":\"Emp Added\",\"flag\":true}",response.getContentAsString());
+		Assert.assertEquals("Incorrect Response Status", HttpStatus.CREATED.value(), status);
+		//Assert.assertEquals("{\"msg\":\"Emp Added\",\"flag\":true}",response.getContentAsString());
 		
-		//Assert.assertEquals("String","String");
+		
+		//Assert.assertEquals("String1","String");
 	}
 	
 	@Test
@@ -82,23 +83,22 @@ public class EmployeeMgmtApplicationTests {
 		
 		Mockito.when(employeeService.deleteEmp(Mockito.anyInt())).thenReturn(true);
 		
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/EmployeeMgmt/deleteEmp/{id}","2");
-				//.accept(MediaType.APPLICATION_JSON) //.contentType(MediaType.APPLICATION_JSON_VALUE)
-				//;
-		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/EmployeeMgmt/deleteEmp/"+"{id}",new Integer(2));
+				
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		MockHttpServletResponse response = result.getResponse();
-		System.out.println("Employee deleted successfully "+response.getContentAsString());
-		Assert.assertEquals("{\"msg\": \"Emp deleted\",\"flag\": true}",response.getContentAsString());
+		
+		int status = result.getResponse().getStatus();
+		
+		Assert.assertEquals("Incorrect Response Status",HttpStatus.GONE.value(),status);
 	}
 	
 	
 	@Test
-	public void updateEmp() throws Exception {
+	public void updateEmpTest() throws Exception {
 		
 		Mockito.when(employeeService.updateEmp(Mockito.any(Employee.class))).thenReturn(true);
 		
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/EmployeeMgmt/updateEmp/")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/EmployeeMgmt/updateEmp")
 				.accept(MediaType.APPLICATION_JSON).content("{\n" + 
 						"	\"id\": 100,\n" + 
 						"	\"empName\":\"prashant\"\n" + 
@@ -106,9 +106,9 @@ public class EmployeeMgmtApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON);
 		
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		MockHttpServletResponse response = result.getResponse();
-		System.out.println("Employee updated successfully100 "+response.getContentAsString());
-		Assert.assertEquals("{\"msg\":\"Emp updated\",\"flag\":true}",response.getContentAsString());
+		int status = result.getResponse().getStatus();
+		//System.out.println("Employee updated successfully100 "+response.getContentAsString());
+		Assert.assertEquals("Incorrect Response Status",HttpStatus.OK.value(),status);
 	}
 	
 
